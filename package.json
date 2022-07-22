@@ -1,6 +1,6 @@
 {
   "name": "avro-ts-generator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A cli to convert avro schemas into typescript interfaces",
   "main": "dist/index.js",
   "source": "src/index.ts",
