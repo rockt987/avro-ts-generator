@@ -14,11 +14,12 @@ interface Options {
   logicalTypeImportDefault?: { [key: string]: { defaultAs: string; module: string } };
   outputDir?: string;
   defaultsAsOptional?: boolean;
+  neverUnwrapUnions?: boolean;
 }
 
 export const convert = (logger: { log: (msg: string) => void } = console): commander.Command =>
   commander
-    .createCommand('avro-ts')
+    .createCommand('avro-ts-generator')
     .arguments('[input...]')
     .option('-O, --output-dir <outputDir>', 'Directory to write typescript files to')
     .option('-e, --defaults-as-optional', 'Fields with defaults as optional')
@@ -61,6 +62,7 @@ export const convert = (logger: { log: (msg: string) => void } = console): comma
       },
       {},
     )
+    .option('-u, --never-unwrap-unions', 'set wrapUnions mode = never')
     .description(
       `Convert avsc to typescript files.
 
@@ -69,14 +71,15 @@ A custom library can be used with --logical-type-import {name}={class to import}
 The --logical-type-import-default and --logical-type-import-all would import the class as default and as synthetic default respectively.
 
 Example:
-  avro-ts avro-schema.avsc
-  avro-ts avro/*.avsc
-  avro-ts avro/*.avsc --output-dir other/dir
-  avro-ts avro/*.avsc --defaults-as-optional
-  avro-ts avro/*.avsc --logical-type date=string --logical-type datetime=string
-  avro-ts avro/*.avsc --logical-type-import decimal=Decimal:decimal.js
-  avro-ts avro/*.avsc --logical-type-import-default decimal=Decimal:decimal.js
-  avro-ts avro/*.avsc --logical-type-import-all decimal=Decimal:decimal.js
+  avro-ts-generator avro-schema.avsc
+  avro-ts-generator avro/*.avsc
+  avro-ts-generator avro/*.avsc --output-dir other/dir
+  avro-ts-generator avro/*.avsc --defaults-as-optional
+  avro-ts-generator avro/*.avsc --logical-type date=string --logical-type datetime=string
+  avro-ts-generator avro/*.avsc --logical-type-import decimal=Decimal:decimal.js
+  avro-ts-generator avro/*.avsc --logical-type-import-default decimal=Decimal:decimal.js
+  avro-ts-generator avro/*.avsc --logical-type-import-all decimal=Decimal:decimal.js
+  avro-ts-generator avro/*.avsc --never-unwrap-unions
   `,
     )
     .action(
@@ -89,6 +92,7 @@ Example:
           logicalTypeImportDefault,
           outputDir,
           defaultsAsOptional,
+          neverUnwrapUnions,
         }: Options,
       ) => {
         if (files.length === 0) {
@@ -123,7 +127,7 @@ Example:
           const allExternal = Object.entries(schemas).reduce(
             (acc, [file, schema]) => ({
               ...acc,
-              [file]: toExternalContext(schema, { logicalTypes, defaultsAsOptional }),
+              [file]: toExternalContext(schema, { logicalTypes, defaultsAsOptional, neverUnwrapUnions }),
             }),
             {},
           );
@@ -139,7 +143,7 @@ Example:
               {},
             );
 
-            const ts = toTypeScript(schema, { logicalTypes, external, defaultsAsOptional });
+            const ts = toTypeScript(schema, { logicalTypes, external, defaultsAsOptional, neverUnwrapUnions });
             const outputFile = outputDir ? join(outputDir, `${basename(file)}.ts`) : `${file}.ts`;
             writeFileSync(outputFile, ts);
             const shortFile = file.replace(process.cwd(), '.');
