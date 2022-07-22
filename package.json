@@ -1,0 +1,43 @@
+{
+  "name": "avro-ts-generator",
+  "version": "1.0.0",
+  "description": "A cli to convert avro schemas into typescript interfaces",
+  "main": "dist/index.js",
+  "source": "src/index.ts",
+  "types": "dist/index.d.ts",
+  "license": "Apache-2.0",
+  "keywords": [],
+  "author": "rockt987",
+  "bin": {
+    "avro-ts": "./scripts/avro-ts"
+  },
+  "scripts": {
+    "avro-ts-generator": "node -r ts-node/register src/cli.ts",
+    "build": "tsc --declaration",
+    "build:docs": "build-docs README.md",
+    "test": "jest test --runInBand",
+    "lint:prettier": "prettier --list-different {src,test}/**/*.ts",
+    "lint:eslint": "eslint '{src,test}/**/*.ts'",
+    "lint": "npm run lint:prettier && npm run lint:eslint"
+  },
+  "jest": {
+    "preset": "../../jest.json"
+  },
+  "dependencies": {
+    "@ovotech/ts-compose": "^0.20.0",
+    "ansi-regex": "^5.0.0",
+    "avsc": "^5.7.4",
+    "chalk": "^4.1.0",
+    "commander": "^7.1.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.20",
+    "@types/node": "^14.14.28",
+    "eslint-config-prettier": "^7.2.0",
+    "jest": "^26.6.3",
+    "prettier": "^2.2.1",
+    "ts-jest": "^26.5.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.7.4"
+  }
+}
