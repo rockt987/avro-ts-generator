@@ -95,5 +95,3 @@ packages/*/dist
 
 .vscode
 **/coverage/**
-
-test-example
